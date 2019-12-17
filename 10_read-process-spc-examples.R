@@ -1,5 +1,6 @@
 ## Load packages
 library("tidyverse")
+library("here")
 library("simplerspec")
 
 # List of Bruker OPUS files from Bruker NIR or mid-IR spectrometer
@@ -19,3 +20,22 @@ spc_tbl <- spc_list %>%
   average_spc(by = "sample_id") %>%
   # Savitzky-Golay 1st derivative, window size of 21 points (2cm^{-1} * 21)
   preprocess_spc(select = "sg_1_w21")
+
+## Plot spectra at various processing stages ===================================
+
+p_spc <-
+  spc_tbl %>%
+  mutate(
+    label = "example spectra"
+  ) %>%
+  plot_spc_ext(
+    spc_tbl = .,
+    lcols_spc = c("spc", "spc_mean", "spc_pre"),
+    group_id = "label",
+    line_width = 0.4
+  )
+
+ggsave(filename = "spc-proc-example.pdf", plot = p_spc,
+  path = here("out", "figs"), width = 5, height = 5)
+ggsave(filename = "spc-proc-example.png", plot = p_spc,
+  path = here("out", "figs"), width = 5, height = 5)
